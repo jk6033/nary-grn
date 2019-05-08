@@ -154,6 +154,7 @@ class ModelGraph(object):
 
 
     def execute(self, sess, batch, batch_rev, options, is_train=False):
+        
         feed_dict = {}
         # mono
         feed_dict[self.nodes] = batch.nodes

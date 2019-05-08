@@ -23,6 +23,8 @@ cc = SmoothingFunction()
 import metric_utils
 
 import platform
+
+import random 
 def get_machine_name():
     return platform.node()
 
@@ -66,6 +68,7 @@ def evaluate(sess, valid_graph, devDataStream, devDataStreamRev, options=None, s
     for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
         cur_batch = devDataStream.get_batch(batch_index)
         cur_batch_rev = devDataStreamRev.get_batch(batch_index)
+        
         accu_value, loss_value, _ = valid_graph.execute(sess, cur_batch, cur_batch_rev, options, is_train=False)
         dev_loss += loss_value
         dev_right += accu_value
@@ -229,9 +232,10 @@ def main(_):
             assert cur_batch.batch_size == cur_batch_rev.batch_size
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
+            
             _, loss_value, _ = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             total_loss += loss_value
-
+            
             if trainDataStream.cur_pointer >= trainDataStream.num_batch:
                 assert trainDataStreamRev.cur_pointer >= trainDataStreamRev.num_batch
                 shuffle_both(trainDataStream, trainDataStreamRev)
@@ -301,7 +305,7 @@ if __name__ == '__main__':
         print('Loading the configuration from ' + FLAGS.config_path)
         FLAGS = namespace_utils.load_namespace(FLAGS.config_path)
 
-    FLAGS = enrich_options(FLAGS)
+    FLAGS = enrich_options(FLAGS) 
 
     sys.stdout.flush()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

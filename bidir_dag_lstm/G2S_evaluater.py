@@ -29,11 +29,11 @@ if __name__ == '__main__':
 
     args, unparsed = parser.parse_known_args()
 
-    model_prefix = args.model_prefix
+    model_prefix = "logs/G2S.cross_mul_0" # args.model_prefix
     in_path = args.in_path
     out_path = args.out_path
 
-    print("CUDA_VISIBLE_DEVICES " + os.environ['CUDA_VISIBLE_DEVICES'])
+    # print("CUDA_VISIBLE_DEVICES " + os.environ['CUDA_VISIBLE_DEVICES'])
 
     # load the configuration file
     print('Loading configurations from ' + model_prefix + ".config.json")

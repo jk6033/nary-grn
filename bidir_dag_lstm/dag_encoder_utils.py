@@ -11,6 +11,9 @@ def collect_neighbor_node_representations_2D(representation, positions):
     idxs = tf.reshape(idxs, [-1, 1]) # [batch_size, 1]
     idxs = tf.tile(idxs, [1, neigh_num]) # [batch_size, neigh_num]
     indices = tf.stack((idxs,positions), axis=2) # [batch_size, neigh_num, 2]
+    
+    # your code here?
+    
     return tf.gather_nd(representation, indices)
 
 
@@ -217,15 +220,15 @@ class GraphEncoder(object):
                 # [batch_size, input_dim]
                 prev_input = tf.gather(passage_in_neighbor_representations, idx_var, axis=1)
 
-                # [batch_size, neighbor_size, dag_hidden_dim]
-                prev_hidden = collect_neighbor_node_representations_2D(passage_node_hidden, prev_idx)
+                # [batch_size, neighbor_size, dag_hidden_dim] 
+                prev_hidden = collect_neighbor_node_representations_2D(passage_node_hidden, prev_idx) #_2D
                 prev_hidden = tf.multiply(prev_hidden, tf.expand_dims(prev_mask, axis=-1))
                 # [batch_size, dag_hidden_dim]
                 prev_hidden = tf.reduce_sum(prev_hidden, axis=1)
                 prev_hidden = tf.multiply(prev_hidden, tf.expand_dims(node_mask, axis=-1))
 
                 # [batch_size, neighbor_size, dag_hidden_dim]
-                prev_cell = collect_neighbor_node_representations_2D(passage_node_cell, prev_idx)
+                prev_cell = collect_neighbor_node_representations_2D(passage_node_cell, prev_idx) #_2D
                 prev_cell = tf.multiply(prev_cell, tf.expand_dims(prev_mask, axis=-1))
                 # [batch_size, dag_hidden_dim]
                 prev_cell = tf.reduce_sum(prev_cell, axis=1)
@@ -267,12 +270,13 @@ class GraphEncoder(object):
 
             loop_condition = lambda a1,b1,idx_var: tf.less(idx_var, passage_nodes_size_max)
             loop_vars = [passage_node_hidden, passage_node_cell, idx_var]
+            
             passage_node_hidden, passage_node_cell, idx_var = tf.while_loop(loop_condition,
                     _recurrence, loop_vars, parallel_iterations=1,
                     shape_invariants=[
                         tf.TensorShape([None, None, options.dag_hidden_dim]),
                         tf.TensorShape([None, None, options.dag_hidden_dim]),
-                        idx_var.get_shape(),])
+                        idx_var.get_shape()]) # (),])
 
             # decide how to use graph_representations
             self.node_representations = passage_node_representation
