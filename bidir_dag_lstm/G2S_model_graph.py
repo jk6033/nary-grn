@@ -125,8 +125,8 @@ class ModelGraph(object):
         self.loss = tf.reduce_mean(tf.clip_by_value(
                 tf.nn.softmax_cross_entropy_with_logits(
                 logits=logits,
-                labels=tf.one_hot(self.answers, options.class_num), 
-            1e-10, 1e+10)))
+                labels=tf.one_hot(self.answers, options.class_num)), 1e-10, 1e+10)
+            )
  
         if mode != 'train':
             print('Return from here, just evaluate')
