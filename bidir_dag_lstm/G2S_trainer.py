@@ -225,6 +225,10 @@ def main(_):
         last_step = 0
         total_loss = 0.0
         start_time = time.time()
+
+        #-----------------------------------#
+        import math
+        #-----------------------------------#
         for step in xrange(max_steps):
             cur_batch = trainDataStream.nextBatch()
             cur_batch_rev = trainDataStreamRev.nextBatch()
@@ -235,12 +239,11 @@ def main(_):
             
             _, loss_value, _ = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             
-            #### our code here ####
-            import math
+        #-----------------------------------#
             if math.isnan(loss_value): 
-                print("nan detected!")
+                print("\nnan detected!\n")
                 continue
-                
+        #-----------------------------------#
             total_loss += loss_value
             
             if trainDataStream.cur_pointer >= trainDataStream.num_batch:
