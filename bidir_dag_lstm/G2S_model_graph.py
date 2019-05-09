@@ -109,10 +109,12 @@ class ModelGraph(object):
                 [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32)
         b_linear = tf.get_variable("b_linear",
                 [options.class_num], dtype=tf.float32)
+
         # [batch, class_num]
         # logits = tf.clip_by_value( tf.clip_by_value( 
         #               tf.matmul(entity_states, w_linear), 1e-10, 1e+10) + b_linear, 1e-10, 1e+10)
-        logits = tf.matmul(entity_states, w_linear) + b_linear + 1-e7
+        logits = tf.matmul(entity_states, w_linear) + b_linear + 1e-7
+
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
 
         ## calculating accuracy
@@ -123,10 +125,15 @@ class ModelGraph(object):
                     dtype=tf.float32))
 
         ## calculating loss
-        self.loss = tf.reduce_mean(tf.clip_by_value(
+        # self.loss = tf.reduce_mean(tf.clip_by_value(
+        #         tf.nn.softmax_cross_entropy_with_logits(
+        #         logits=logits,
+        #         labels=tf.one_hot(self.answers, options.class_num)), 1e-20, 1e+20)
+        #     )
+        self.loss = tf.reduce_mean(
                 tf.nn.softmax_cross_entropy_with_logits(
                 logits=logits,
-                labels=tf.one_hot(self.answers, options.class_num)), 1e-20, 1e+20)
+                labels=tf.one_hot(self.answers, options.class_num))
             )
  
         if mode != 'train':
