@@ -12,8 +12,6 @@ def collect_neighbor_node_representations_2D(representation, positions):
     idxs = tf.tile(idxs, [1, neigh_num]) # [batch_size, neigh_num]
     indices = tf.stack((idxs,positions), axis=2) # [batch_size, neigh_num, 2]
     
-    # your code here?
-    
     return tf.gather_nd(representation, indices)
 
 
