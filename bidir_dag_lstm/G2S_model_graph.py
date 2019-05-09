@@ -110,8 +110,9 @@ class ModelGraph(object):
         b_linear = tf.get_variable("b_linear",
                 [options.class_num], dtype=tf.float32)
         # [batch, class_num]
-        logits = tf.clip_by_value( tf.clip_by_value(
-                        tf.matmul(entity_states, w_linear), 1e-10, 1e+10) + b_linear, 1e-10, 1e+10)
+        # logits = tf.clip_by_value( tf.clip_by_value( 
+        #               tf.matmul(entity_states, w_linear), 1e-10, 1e+10) + b_linear, 1e-10, 1e+10)
+        logits = tf.matmul(entity_states, w_linear) + b_linear + 1-e7
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
 
         ## calculating accuracy
@@ -137,7 +138,7 @@ class ModelGraph(object):
             optimizer = tf.train.AdadeltaOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
-                l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1])
+                l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]) ## room for improvement
                 self.loss = self.loss + options.lambda_l2 * l2_loss
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
