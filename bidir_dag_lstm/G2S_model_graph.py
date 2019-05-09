@@ -110,7 +110,7 @@ class ModelGraph(object):
         b_linear = tf.get_variable("b_linear",
                 [options.class_num], dtype=tf.float32)
         # [batch, class_num]
-        logits = tf.matmul(entity_states, w_linear) + b_linear + tf.constant(1e-12)
+        logits = tf.matmul(entity_states, w_linear) + b_linear #  + tf.constant(1e-10)
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
 
         ## calculating accuracy
