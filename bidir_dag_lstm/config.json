@@ -7,7 +7,7 @@
     
     "word_format": "morph",
     "class_num": 5,
-    "only_single_sent": false,
+    "only_single_sent": true,
 
     "batch_size": 8,
     "max_node_num": 450,
