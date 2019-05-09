@@ -175,7 +175,7 @@ class ModelGraph(object):
         feed_dict[self.out_neigh_indices] = batch.out_neigh_indices
         feed_dict[self.out_neigh_edges] = batch.out_neigh_edges
         feed_dict[self.out_neigh_mask] = batch.out_neigh_mask
-
+ 
         feed_dict[self.entity_indices] = batch.entity_indices
         feed_dict[self.entity_indices_mask] = batch.entity_indices_mask
         feed_dict[self.refs] = batch.y
