@@ -227,7 +227,7 @@ def main(_):
         start_time = time.time()
 
         #-----------------------------------#
-        import math
+        # import math
         #-----------------------------------#
         for step in xrange(max_steps):
             cur_batch = trainDataStream.nextBatch()
@@ -240,11 +240,11 @@ def main(_):
             _, loss_value, _ = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             
         #-----------------------------------#
-            if math.isnan(loss_value): 
-                print("\nnan detected!")
-                print("cur batch:")
-                print(cur_batch)
-                continue
+            # if math.isnan(loss_value): 
+            #     print("\nnan detected!")
+            #     print("cur batch:")
+            #     print(cur_batch)
+            #     continue
         #-----------------------------------#
             total_loss += loss_value
             
