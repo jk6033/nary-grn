@@ -108,6 +108,7 @@ if __name__ == '__main__':
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
             accu_value, loss_value, output_value = valid_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=False)
+            
             instances += cur_batch.instances
             instances_rev += cur_batch_rev.instances
             outputs += output_value.flatten().tolist()
