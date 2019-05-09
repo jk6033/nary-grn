@@ -125,18 +125,18 @@ class ModelGraph(object):
                     dtype=tf.float32))
 
         ## calculating loss
-        # self.loss = tf.reduce_mean(tf.clip_by_value(
-        #         tf.nn.softmax_cross_entropy_with_logits(
-        #         logits=logits,
-        #         labels=tf.one_hot(self.answers, options.class_num)), 1e-20, 1e+20)
-        #     )
+        self.loss = tf.reduce_mean(tf.clip_by_value(
+                tf.nn.softmax_cross_entropy_with_logits(
+                logits=logits,
+                labels=tf.one_hot(self.answers, options.class_num)), 1e-20, 1e+20)
+            )
         # epsilon = tf.constant(value=0.00001)
         # logits  = logits + epsilon
-        softmax = tf.clip_by_value(tf.nn.softmax(logits), 1e-10, 1.0)
-        cross_entropy = -tf.reduce_sum(
-                    tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
-                    reduction_indices=[1])
-        self.loss = tf.reduce_mean(cross_entropy)
+        # softmax = tf.clip_by_value(tf.nn.softmax(logits), 1e-10, 1.0)
+        # cross_entropy = -tf.reduce_sum(
+        #             tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
+        #             reduction_indices=[1])
+        # self.loss = tf.reduce_mean(cross_entropy)
  
         if mode != 'train':
             print('Return from here, just evaluate')
