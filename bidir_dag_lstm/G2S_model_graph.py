@@ -125,7 +125,7 @@ class ModelGraph(object):
             logits=logits,
             labels=tf.one_hot(self.answers,options.class_num)))
         print("calculating loss:")
-        print(loss)
+        print(self.loss)
 
         if mode != 'train':
             print('Return from here, just evaluate')
