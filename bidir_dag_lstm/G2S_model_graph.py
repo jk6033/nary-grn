@@ -110,7 +110,7 @@ class ModelGraph(object):
         b_linear = tf.get_variable("b_linear",
                 [options.class_num], dtype=tf.float32)
         # [batch, class_num]
-        logits = tf.matmul(entity_states, w_linear) + b_linear #  + tf.constant(1e-10)
+        logits = tf.clip_by_value(tf.matmul(entity_states, w_linear) + b_linear, 1e-10, 1.0) #  + tf.constant(1e-10)
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
 
         ## calculating accuracy
@@ -139,7 +139,7 @@ class ModelGraph(object):
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'adam':
-            print("code is on adam optimizer")
+            # print("code is on adam optimizer")
             clipper = 50
             optimizer = tf.train.AdamOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
