@@ -241,7 +241,9 @@ def main(_):
             
         #-----------------------------------#
             if math.isnan(loss_value): 
-                print("\nnan detected!\n")
+                print("\nnan detected!")
+                print("cur batch:")
+                print(cur_batch)
                 continue
         #-----------------------------------#
             total_loss += loss_value
