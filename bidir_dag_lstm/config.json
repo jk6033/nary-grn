@@ -37,4 +37,6 @@
 
     "config_path": "config.json",
     "generate_config": false
+
+    , "dag_hidden_dim": 100
 }
