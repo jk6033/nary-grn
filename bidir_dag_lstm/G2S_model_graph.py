@@ -204,7 +204,7 @@ class ModelGraph(object):
         if is_train:
             return sess.run([self.accu, self.loss, self.train_op], feed_dict)
         else:
-            return sess.run([self.accu, self.loss, self.output, self.answers], feed_dict)
+            return sess.run([self.accu, self.loss, self.output], feed_dict)
 
 
 if __name__ == '__main__':
