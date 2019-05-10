@@ -230,11 +230,19 @@ def main(_):
         total_loss = 0.0
         start_time = time.time()
 
+        # accumulate train data
+        answer = []
+        prediction = []
+        entity = []
+
         for step in xrange(max_steps):
             
             cur_batch = trainDataStream.nextBatch()
-            _, loss_value, _, truth_value, pred_value, entity_states = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
+            _, loss_value, _, answer_temp, pred_temp, entity_temp = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
             total_loss += loss_value
+            answer += answer_temp.flatten().tolist()
+            prediction += pred_temp.flatten().tolist()
+            entity += entity_temp.flatten().tolist()
 
             if step % 100==0:
                 print('{} '.format(step), end="")
@@ -283,14 +291,13 @@ def main(_):
 
                     # also, write ground truth, predicted outcome, and entity states respectively
                     # first, for the train set
-                    json.dump(truth_value, open(FLAGS.train_answer_path, 'w'))
-                    json.dump(pred_value, open(FLAGS.train_output_path, 'w'))
-                    json.dump(entity_states, open(FLAGS.train_entity_path, 'w'))
-
+                    train_jsonify = {
+                        "answer": answer, "output": prediction, "entity": entity}
+                    json.dump(train_jsonify, open(FLAGS.train_path, 'w'))
                     # next, for the validation set
-                    json.dump(dev_answer, open(FLAGS.validate_answer_path, 'w'))
-                    json.dump(dev_output, open(FLAGS.validate_output_path, 'w'))
-                    json.dump(dev_entities, open(FLAGS.validate_entity_path, 'w'))
+                    validation_jsonify = {
+                        "answer": dev_answer, "output": dev_output, "entity": dev_entities}
+                    json.dump(validation_jsonify, open(FLAGS.validate_path, 'w'))
 
                 duration = time.time() - start_time
                 print('Duration %.3f sec' % (duration))

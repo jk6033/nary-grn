@@ -42,15 +42,7 @@
     "generate_config": false
 
 
-    , "train_answer_path": "logs/train/answer.json"
-    , "train_output_path": "logs/train/predict.json"
-    , "train_entity_path": "logs/train/entity.json"
-
-    , "validate_answer_path": "logs/validate/answer.json"
-    , "validate_output_path": "logs/validate/predict.json"
-    , "validate_entity_path": "logs/validate/entity.json"
-
-    , "test_answer_path": "logs/test/answer.json"
-    , "test_output_path": "logs/test/predict.json"
-    , "test_entity_path": "logs/test/entity.json"
+    , "train_result_path": "logs/train/result.json"
+    , "validate_path": "logs/validate/result.json"
+    , "test_path": "logs/test/result.json"
 }

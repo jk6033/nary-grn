@@ -120,9 +120,10 @@ if __name__ == '__main__':
         assert len(instances) == len(outputs)
         json.dump((instances,outputs,testset), open(out_path,'w'))
 
-        json.dump(answers, open(FLAGS.test_answer_path, 'w'))
-        json.dump(outputs, open(FLAGS.test_output_path, 'w'))
-        json.dump(entities, open(FLAGS.test_entity_path, 'w'))
+        test_jsonify = {
+            "answer": answers, "output": outputs, "entity": entities
+        }
+        json.dump(test_jsonify, open(FLAGS.test_result_path, 'w'))
 
 
         print('Test accu {}, right {}, total {}'.format(1.0*test_right/test_total, test_right, test_total))
