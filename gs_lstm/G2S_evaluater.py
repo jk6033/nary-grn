@@ -108,9 +108,9 @@ if __name__ == '__main__':
             answers += truth_value.flatten().tolist()
             outputs += output_value.flatten().tolist()
 
-            dev_loss += loss_value
-            dev_right += accu_value
-            dev_total += cur_batch.batch_size
+            test_loss += loss_value
+            test_right += accu_value
+            test_total += cur_batch.batch_size
 
             entities += entity_states.tolist()
 
