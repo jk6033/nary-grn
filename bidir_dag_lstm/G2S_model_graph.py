@@ -129,21 +129,13 @@ class ModelGraph(object):
         ## calculating loss
         self.loss = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits( 
                 logits=logits, labels=tf.one_hot(self.answers, options.class_num)))
-        # epsilon = tf.constant(value=1.0e-6)
-        # logits  = logits + epsilon
-        # softmax = tf.nn.softmax(logits)
-        # softmax = _clip_and_normalize(softmax, 1.0e-6)
-        # cross_entropy = -tf.reduce_sum(
-        #             tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
-        #             reduction_indices=[1])
-        # self.loss = tf.reduce_mean(cross_entropy)
 
         if mode != 'train':
             print('Return from here, just evaluate')
             return
 
         if options.optimize_type == 'adadelta':
-            clipper = 50
+            clipper = 5.0 # used to be 50
             optimizer = tf.train.AdadeltaOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
@@ -153,7 +145,7 @@ class ModelGraph(object):
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'adam':
-            clipper = 50
+            clipper = 5.0 # used to be 50
             optimizer = tf.train.AdamOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
