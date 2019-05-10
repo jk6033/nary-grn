@@ -25,6 +25,11 @@ import metric_utils
 import platform
 
 import random 
+
+#-----------------------------------#
+import math
+#-----------------------------------#
+
 def get_machine_name():
     return platform.node()
 
@@ -226,9 +231,6 @@ def main(_):
         total_loss = 0.0
         start_time = time.time()
 
-        #-----------------------------------#
-        # import math
-        #-----------------------------------#
         for step in xrange(max_steps):
             cur_batch = trainDataStream.nextBatch()
             cur_batch_rev = trainDataStreamRev.nextBatch()
@@ -237,12 +239,19 @@ def main(_):
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
             
-            _, loss_value, _ = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
+            _, loss_value, _, entity_states, w_linear, b_linear = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             
         #-----------------------------------#
-            # if math.isnan(loss_value): 
-            #     print("\nnan detected!")
-            #     continue
+            
+            ####
+            for e in entity_states:
+                if math.isnan(e): print("NaN detected in entity_states")
+            for w in w_linear:
+                if math.isnan(w): print("NaN detected in w_linear")
+            for b in b_linear:
+                if math.isnan(b): print("NaN detected in b_linear")
+            ####
+
         #-----------------------------------#
             total_loss += loss_value
             

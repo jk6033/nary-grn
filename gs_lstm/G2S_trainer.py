@@ -214,16 +214,9 @@ def main(_):
         for step in xrange(max_steps):
             
             cur_batch = trainDataStream.nextBatch()
-            _, loss_value, _, w_linear, b_linear = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
+            _, loss_value, _ = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
             total_loss += loss_value
 
-            ####
-            for w in w_linear:
-                if math.isnan(w): print("NaN detected in w_linear")
-            for b in b_linear:
-                if math.isnan(b): print("NaN detected in b_linear")
-            ####
-            
             if step % 100==0:
                 print('{} '.format(step), end="")
                 sys.stdout.flush()
