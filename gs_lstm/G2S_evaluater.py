@@ -121,8 +121,7 @@ if __name__ == '__main__':
         json.dump((instances,outputs,testset), open(out_path,'w'))
 
         test_jsonify = {
-            "answer": answers, "output": outputs, "entity": entities
-        }
+            "answer": answers, "output": outputs, "entity": entities}
         json.dump(test_jsonify, open(FLAGS.test_result_path, 'w'))
 
 
