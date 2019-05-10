@@ -173,28 +173,32 @@ class GraphEncoder(object):
 
         with tf.variable_scope('gated_operations'):
             w_in_ingate = tf.get_variable("w_in_ingate",
-                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
+                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32, 
+                    constraint=lambda t: tf.clip_by_norm(t, 1.0)) # modified
             u_in_ingate = tf.get_variable("u_in_ingate",
                     [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
             b_ingate = tf.get_variable("b_in_ingate",
                     [options.dag_hidden_dim], dtype=tf.float32)
 
             w_in_forgetgate = tf.get_variable("w_in_forgetgate",
-                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
+                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32,
+                    constraint=lambda t: tf.clip_by_norm(t, 1.0)) # modified
             u_in_forgetgate = tf.get_variable("u_in_forgetgate",
                     [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
             b_forgetgate = tf.get_variable("b_in_forgetgate",
                     [options.dag_hidden_dim], dtype=tf.float32)
 
             w_in_outgate = tf.get_variable("w_in_outgate",
-                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
+                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32,
+                    constraint=lambda t: tf.clip_by_norm(t, 1.0)) # modified
             u_in_outgate = tf.get_variable("u_in_outgate",
                     [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
             b_outgate = tf.get_variable("b_in_outgate",
                     [options.dag_hidden_dim], dtype=tf.float32)
 
             w_in_cell = tf.get_variable("w_in_cell",
-                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
+                    [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32,
+                    constraint=lambda t: tf.clip_by_norm(t, 1.0)) # modified
             u_in_cell = tf.get_variable("u_in_cell",
                     [options.dag_hidden_dim, options.dag_hidden_dim], dtype=tf.float32)
             b_cell = tf.get_variable("b_in_cell",
