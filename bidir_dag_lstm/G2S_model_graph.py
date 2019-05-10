@@ -148,19 +148,20 @@ class ModelGraph(object):
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
                 l2_loss = tf.clip_by_value(
-                    tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]), 1e-10, 1e+10) ## room for improvement
+                    tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]), 1e-20, 1e+20) ## room for improvement
                 self.loss = self.loss + options.lambda_l2 * l2_loss
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'adam':
-            # print("code is on adam optimizer")
             clipper = 50
             optimizer = tf.train.AdamOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
-                l2_loss = tf.clip_by_value(
-                    tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]), 1e-10, 1e+10) ## room for improvement
-                self.loss = self.loss + options.lambda_l2 * l2_loss
+                # l2_loss = tf.clip_by_value(
+                #     tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]), 1e-20, 1e+20) ## room for improvement
+                self.loss = self.loss + tf.clip_by_value(
+                                            options.lambda_l2 * tf.add_n(
+                                            [tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1] ), 1e-20, 1e+20) # replace l2_loss
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
 
