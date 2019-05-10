@@ -153,6 +153,15 @@ class ModelGraph(object):
                 self.loss = self.loss + options.lambda_l2 * l2_loss # nan
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
+        elif options.optimize_type == 'sgd':
+            clipper = 5.0 # used to be 50
+            optimizer = tf.train.GradientDescentOptimizer(learning_rate=options.learning_rate)
+            tvars = tf.trainable_variables()
+            if options.lambda_l2>0.0:
+                l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1)])
+                self.loss = self.loss + options.lambda_l2 * l2_loss # nan
+            grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
+            self.train_op = optimizer.apply_gradients(zip(grads, tvars))
 
         extra_train_ops = []
         train_ops = [self.train_op] + extra_train_ops
