@@ -237,7 +237,7 @@ def main(_):
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
             
-            _, loss_value, _, _ = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
+            _, loss_value, _= train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             
         #-----------------------------------#
             # if math.isnan(loss_value): 
