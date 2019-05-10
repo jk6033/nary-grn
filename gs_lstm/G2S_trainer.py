@@ -293,11 +293,11 @@ def main(_):
                     # first, for the train set
                     train_jsonify = {
                         "answer": answer, "output": prediction, "entity": entity}
-                    json.dump(train_jsonify, open(FLAGS.train_path, 'w'))
+                    json.dump(train_jsonify, open(FLAGS.train_result_path, 'w'))
                     # next, for the validation set
                     validation_jsonify = {
                         "answer": dev_answer, "output": dev_output, "entity": dev_entities}
-                    json.dump(validation_jsonify, open(FLAGS.validate_path, 'w'))
+                    json.dump(validation_jsonify, open(FLAGS.validate_result_path, 'w'))
 
                 duration = time.time() - start_time
                 print('Duration %.3f sec' % (duration))
