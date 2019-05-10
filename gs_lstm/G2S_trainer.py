@@ -81,7 +81,7 @@ def evaluate(sess, valid_graph, devDataStream, options=None, suffix=''):
         dev_right += accu_value
         dev_total += cur_batch.batch_size
 
-        entities += entity_states.flatten().tolist()
+        entities += entity_states.tolist()
 
     return {'dev_loss':dev_loss, 
             'dev_accu':1.0*dev_right/dev_total, 
@@ -242,7 +242,7 @@ def main(_):
             total_loss += loss_value
             answer += answer_temp.flatten().tolist()
             prediction += pred_temp.flatten().tolist()
-            entity += entity_temp.flatten().tolist()
+            entity += entity_temp.tolist()
 
             if step % 100==0:
                 print('{} '.format(step), end="")

@@ -112,7 +112,7 @@ if __name__ == '__main__':
             dev_right += accu_value
             dev_total += cur_batch.batch_size
 
-            entities += entity_states.flatten().tolist()
+            entities += entity_states.tolist()
 
         duration = time.time() - start_time
         print('Decoding time %.3f sec' % (duration))
