@@ -244,10 +244,10 @@ def main(_):
         #-----------------------------------#
             
             ####
-            for e in entity_states.flatten():
-                if math.isnan(e): 
-                    print("NaN detected in entity_states")
-                    continue
+            # for e in entity_states.flatten():
+            #     if math.isnan(e): 
+            #         print("NaN detected in entity_states")
+            #         continue
             for w in entity_states_for.flatten():
                 if math.isnan(w): 
                     print("NaN detected in entity_states_for")
