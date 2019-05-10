@@ -114,6 +114,13 @@ class ModelGraph(object):
         logits = tf.matmul(entity_states, w_linear) + b_linear
 
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
+ 
+        ## calculating accuracy
+        self.answers = tf.placeholder(tf.int32, [None,])
+        self.accu = tf.reduce_sum(
+                tf.cast(
+                    tf.equal(tf.argmax(logits,axis=-1,output_type=tf.int32),self.answers),
+                    dtype=tf.float32))
 
         ## calculating loss
         # self.loss = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits( 
@@ -126,13 +133,6 @@ class ModelGraph(object):
                     tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
                     reduction_indices=[1])
         self.loss = tf.reduce_mean(cross_entropy)
- 
-        ## calculating accuracy
-        self.answers = tf.placeholder(tf.int32, [None,])
-        self.accu = tf.reduce_sum(
-                tf.cast(
-                    tf.equal(tf.argmax(logits,axis=-1,output_type=tf.int32),self.answers),
-                    dtype=tf.float32))
 
         if mode != 'train':
             print('Return from here, just evaluate')
