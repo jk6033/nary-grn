@@ -105,10 +105,8 @@ class ModelGraph(object):
         self.rev_in_neigh_mask = self.encoder_rev.passage_in_neighbor_mask
 
 
-        w_linear = tf.get_variable("w_linear",
-                [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32)
-        b_linear = tf.get_variable("b_linear",
-                [options.class_num], dtype=tf.float32)
+        w_linear = tf.get_variable("w_linear", [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32)
+        b_linear = tf.get_variable("b_linear", [options.class_num], dtype=tf.float32)
 
         # [batch, class_num]
         # logits = tf.clip_by_value( tf.clip_by_value( 
@@ -125,18 +123,15 @@ class ModelGraph(object):
                     dtype=tf.float32))
 
         ## calculating loss
-        # self.loss = tf.reduce_mean(tf.clip_by_value(
-        #         tf.nn.softmax_cross_entropy_with_logits(
-        #         logits=logits,
-        #         labels=tf.one_hot(self.answers, options.class_num)), 1e-20, 1e+20)
-        #     )
-        epsilon = tf.constant(value=0.00001)
-        logits  = logits + epsilon
-        softmax = tf.clip_by_value(tf.nn.softmax(logits), 1e-10, 1.0)
-        cross_entropy = -tf.reduce_sum(
-                    tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
-                    reduction_indices=[1])
-        self.loss = tf.reduce_mean(cross_entropy)
+        self.loss = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits( 
+                logits=logits, labels=tf.one_hot(self.answers, options.class_num)))
+        # epsilon = tf.constant(value=0.00001)
+        # logits  = logits + epsilon
+        # softmax = tf.clip_by_value(tf.nn.softmax(logits), 1e-10, 1.0)
+        # cross_entropy = -tf.reduce_sum(
+        #             tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
+        #             reduction_indices=[1])
+        # self.loss = tf.reduce_mean(cross_entropy)
  
         if mode != 'train':
             print('Return from here, just evaluate')
@@ -147,8 +142,9 @@ class ModelGraph(object):
             optimizer = tf.train.AdadeltaOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
-                l2_loss = tf.clip_by_value(
-                    tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]), 1e-20, 1e+20) ## room for improvement
+                l2_loss = tf.add_n(
+                    [tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1) and ('w_linear' in v.name)]
+                    ) ## room for improvement
                 self.loss = self.loss + options.lambda_l2 * l2_loss
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
@@ -159,9 +155,10 @@ class ModelGraph(object):
             if options.lambda_l2>0.0:
                 # l2_loss = tf.clip_by_value(
                 #     tf.add_n([tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1]), 1e-20, 1e+20) ## room for improvement
-                self.loss = self.loss + tf.clip_by_value(
-                                            options.lambda_l2 * tf.add_n(
-                                            [tf.nn.l2_loss(v) for v in tvars if v.get_shape().ndims > 1] ), 1e-20, 1e+20) # replace l2_loss
+                l2_loss = tf.add_n(
+                    [tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1) and ('b_linear' not in v.name)]
+                )
+                self.loss = self.loss + options.lambda_l2 * l2_loss
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
 
