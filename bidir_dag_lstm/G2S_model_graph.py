@@ -111,6 +111,12 @@ class ModelGraph(object):
         b_linear = tf.get_variable(
                 "b_linear", [options.class_num], dtype=tf.float32)
 
+        ###
+        self.entity_states = entity_states
+        self.w_linear = w_linear
+        self.b_linear = b_linear
+        ###
+
         # [batch, class_num]
         logits = tf.matmul(entity_states, w_linear) + b_linear
 
@@ -202,7 +208,7 @@ class ModelGraph(object):
 
         if is_train:
             return sess.run(
-                [self.accu, self.loss, self.train_op, entity_states, w_linear, b_linear], feed_dict)
+                [self.accu, self.loss, self.train_op, self.entity_states, self.w_linear, self.b_linear], feed_dict)
         else:
             return sess.run([self.accu, self.loss, self.output], feed_dict)
 
