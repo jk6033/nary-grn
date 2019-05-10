@@ -239,17 +239,23 @@ def main(_):
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
             
-            _, loss_value, _, entity_states, w_linear, b_linear = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
+            _, loss_value, _, entity_states, entity_states_for, entity_states_rev = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             
         #-----------------------------------#
             
             ####
             for e in entity_states.flatten():
-                if math.isnan(e): print("NaN detected in entity_states")
-            for w in w_linear.flatten():
-                if math.isnan(w): print("NaN detected in w_linear")
-            for b in b_linear.flatten():
-                if math.isnan(b): print("NaN detected in b_linear")
+                if math.isnan(e): 
+                    print("NaN detected in entity_states")
+                    continue
+            for w in entity_states_for.flatten():
+                if math.isnan(w): 
+                    print("NaN detected in entity_states_for")
+                    continue
+            for b in entity_states_rev.flatten():
+                if math.isnan(b): 
+                    print("NaN detected in entity_states_rev")
+                    continue
             ####
 
         #-----------------------------------#

@@ -78,6 +78,10 @@ class ModelGraph(object):
             # [batch, 3*encoder_dim]
             entity_states = tf.reshape(entity_states, [batch_size, entity_num*dim*2])
 
+        ###
+        self.entity_states = entity_states
+        ###
+
         # placeholders
         self.nodes = self.encoder.passage_nodes
         self.nodes_num = self.encoder.passage_nodes_size
@@ -110,12 +114,6 @@ class ModelGraph(object):
                 dtype=tf.float32) # , constraint=lambda t: tf.clip_by_norm(t, 1))
         b_linear = tf.get_variable(
                 "b_linear", [options.class_num], dtype=tf.float32)
-
-        ###
-        self.entity_states = entity_states
-        self.w_linear = w_linear
-        self.b_linear = b_linear
-        ###
 
         # [batch, class_num]
         logits = tf.matmul(entity_states, w_linear) + b_linear
@@ -208,7 +206,7 @@ class ModelGraph(object):
 
         if is_train:
             return sess.run(
-                [self.accu, self.loss, self.train_op, self.entity_states, self.w_linear, self.b_linear], feed_dict)
+                [self.accu, self.loss, self.train_op, self.entity_states, self.entity.entity_states, self.entity_rev.entity_states], feed_dict)
         else:
             return sess.run([self.accu, self.loss, self.output], feed_dict)
 
