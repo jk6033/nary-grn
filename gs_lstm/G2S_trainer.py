@@ -65,7 +65,10 @@ def evaluate(sess, valid_graph, devDataStream, options=None, suffix=''):
     dev_loss = 0.0
     dev_right = 0.0
     dev_total = 0.0
+    
     entities = []
+    answers = []
+    
     for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
         cur_batch = devDataStream.get_batch(batch_index)
         accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(sess, cur_batch, options, is_train=False)
