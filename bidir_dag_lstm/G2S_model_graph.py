@@ -106,36 +106,33 @@ class ModelGraph(object):
 
 
         w_linear = tf.get_variable(
-                "w_linear", [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32, 
-                constraint=lambda t: tf.clip_by_norm(t, 1))
+                "w_linear", [options.entity_num*self.encoder_dim, options.class_num], 
+                dtype=tf.float32) # , constraint=lambda t: tf.clip_by_norm(t, 1))
         b_linear = tf.get_variable(
                 "b_linear", [options.class_num], dtype=tf.float32)
 
         # [batch, class_num]
-        # logits = tf.clip_by_value( tf.clip_by_value( 
-        #               tf.matmul(entity_states, w_linear), 1e-10, 1e+10) + b_linear, 1e-10, 1e+10)
         logits = tf.matmul(entity_states, w_linear) + b_linear
 
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
  
         ## calculating accuracy
         self.answers = tf.placeholder(tf.int32, [None,])
-        self.accu = tf.reduce_sum(
-                tf.cast(
-                    tf.equal(tf.argmax(logits,axis=-1,output_type=tf.int32),self.answers),
-                    dtype=tf.float32))
+        self.accu = tf.reduce_sum( tf.cast(
+                tf.equal(tf.argmax(logits,axis=-1,output_type=tf.int32),self.answers),
+                dtype=tf.float32))
 
         ## calculating loss
-        # self.loss = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits( 
-        #         logits=logits, labels=tf.one_hot(self.answers, options.class_num)))
-        epsilon = tf.constant(value=1.0e-6)
-        logits  = logits + epsilon
-        softmax = tf.nn.softmax(logits)
-        softmax = _clip_and_normalize(softmax, 1.0e-6)
-        cross_entropy = -tf.reduce_sum(
-                    tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
-                    reduction_indices=[1])
-        self.loss = tf.reduce_mean(cross_entropy)
+        self.loss = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits( 
+                logits=logits, labels=tf.one_hot(self.answers, options.class_num)))
+        # epsilon = tf.constant(value=1.0e-6)
+        # logits  = logits + epsilon
+        # softmax = tf.nn.softmax(logits)
+        # softmax = _clip_and_normalize(softmax, 1.0e-6)
+        # cross_entropy = -tf.reduce_sum(
+        #             tf.one_hot(self.answers, options.class_num) * tf.log(softmax), 
+        #             reduction_indices=[1])
+        # self.loss = tf.reduce_mean(cross_entropy)
 
         if mode != 'train':
             print('Return from here, just evaluate')
@@ -147,8 +144,7 @@ class ModelGraph(object):
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
                 l2_loss = tf.add_n(
-                    [tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1)] # and ('w_linear' in v.name)]
-                    ) ## room for improvement
+                    [tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1)] ) # and ('w_linear' in v.name)]
                 self.loss = self.loss + options.lambda_l2 * l2_loss
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
@@ -157,8 +153,8 @@ class ModelGraph(object):
             optimizer = tf.train.AdamOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
-                l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1)]) # and ('w_linear' in v.name)])
-                self.loss = self.loss + options.lambda_l2 * l2_loss
+                l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tvars if (v.get_shape().ndims > 1)])
+                self.loss = self.loss + options.lambda_l2 * l2_loss # nan
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
 
@@ -205,7 +201,8 @@ class ModelGraph(object):
         feed_dict[self.answers] = batch.y
 
         if is_train:
-            return sess.run([self.accu, self.loss, self.train_op], feed_dict)
+            return sess.run(
+                [self.accu, self.loss, self.train_op, entity_states, w_linear, b_linear], feed_dict)
         else:
             return sess.run([self.accu, self.loss, self.output], feed_dict)
 
