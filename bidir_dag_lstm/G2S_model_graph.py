@@ -105,8 +105,11 @@ class ModelGraph(object):
         self.rev_in_neigh_mask = self.encoder_rev.passage_in_neighbor_mask
 
 
-        w_linear = tf.get_variable("w_linear", [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32)
-        b_linear = tf.get_variable("b_linear", [options.class_num], dtype=tf.float32)
+        w_linear = tf.get_variable(
+                "w_linear", [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32, 
+                constraint=lambda t: tf.clip_by_norm(t, 1))
+        b_linear = tf.get_variable(
+                "b_linear", [options.class_num], dtype=tf.float32)
 
         # [batch, class_num]
         # logits = tf.clip_by_value( tf.clip_by_value( 
