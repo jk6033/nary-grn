@@ -99,17 +99,28 @@ if __name__ == '__main__':
         start_time = time.time()
         for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
             cur_batch = devDataStream.get_batch(batch_index)
-            accu_value, loss_value, output_value = valid_graph.execute(sess, cur_batch, FLAGS, is_train=False)
+            accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(sess, cur_batch, FLAGS, is_train=False)
             instances += cur_batch.instances
+            
+            answers += truth_value.flatten().tolist()
             outputs += output_value.flatten().tolist()
-            test_loss += loss_value
-            test_right += accu_value
-            test_total += cur_batch.batch_size
+
+            dev_loss += loss_value
+            dev_right += accu_value
+            dev_total += cur_batch.batch_size
+
+            entities += entity_states.flatten().tolist()
+
         duration = time.time() - start_time
         print('Decoding time %.3f sec' % (duration))
 
         assert len(instances) == len(outputs)
         json.dump((instances,outputs,testset), open(out_path,'w'))
+
+        json.dump(answers, open(FLAGS.test_answer_path, 'w'))
+        json.dump(outputs, open(FLAGS.test_output_path, 'w'))
+        json.dump(entities, open(FLAGS.test_entity_path, 'w'))
+
 
         print('Test accu {}, right {}, total {}'.format(1.0*test_right/test_total, test_right, test_total))
 

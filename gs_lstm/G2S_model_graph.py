@@ -112,6 +112,10 @@ class ModelGraph(object):
         # flatten: [batch, 3*encoder_dim]
         entity_states = tf.reshape(entity_states, [batch_size, entity_num*dim])
 
+        # my code here
+        self.entity_states = entity_states
+        
+
         w_linear = tf.get_variable("w_linear",
                 [options.entity_num*self.encoder_dim, options.class_num], dtype=tf.float32)
         b_linear = tf.get_variable("b_linear",
@@ -125,6 +129,8 @@ class ModelGraph(object):
         self.refs = tf.placeholder(tf.int32, [None,])
         self.accu = tf.reduce_sum(tf.cast(tf.equal(self.output,self.refs),dtype=tf.float32))
 
+        ## self ref stands for actual answer, and self output stands for the prediction
+
         ## calculating loss
         # xent: [batch]
         xent = -tf.reduce_sum(
@@ -137,7 +143,7 @@ class ModelGraph(object):
             return
 
         if options.optimize_type == 'adadelta':
-            clipper = 50
+            clipper = 5.0
             optimizer = tf.train.AdadeltaOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
@@ -146,7 +152,7 @@ class ModelGraph(object):
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'adam':
-            clipper = 50
+            clipper = 5.0
             optimizer = tf.train.AdamOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
@@ -180,9 +186,20 @@ class ModelGraph(object):
         feed_dict[self.entity_indices_mask] = batch.entity_indices_mask
         feed_dict[self.refs] = batch.y
         if is_train:
-            return sess.run([self.accu, self.loss, self.train_op], feed_dict)
+            return sess.run([
+                self.accu, 
+                self.loss, 
+                self.train_op, 
+                self.refs, 
+                self.output, 
+                self.entity_states], feed_dict)
         else:
-            return sess.run([self.accu, self.loss, self.output], feed_dict)
+            return sess.run([
+                self.accu, 
+                self.loss, 
+                self.refs, 
+                self.output, 
+                self.entity_states], feed_dict)
 
 
 if __name__ == '__main__':

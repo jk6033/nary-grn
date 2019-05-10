@@ -65,16 +65,32 @@ def evaluate(sess, valid_graph, devDataStream, options=None, suffix=''):
     dev_loss = 0.0
     dev_right = 0.0
     dev_total = 0.0
+    entities = []
     for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
         cur_batch = devDataStream.get_batch(batch_index)
-        accu_value, loss_value, output_value = valid_graph.execute(sess, cur_batch, options, is_train=False)
+        accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(sess, cur_batch, options, is_train=False)
         instances += cur_batch.instances
+        
+        answers += truth_value.flatten().tolist()
         outputs += output_value.flatten().tolist()
+
         dev_loss += loss_value
         dev_right += accu_value
         dev_total += cur_batch.batch_size
 
-    return {'dev_loss':dev_loss, 'dev_accu':1.0*dev_right/dev_total, 'dev_right':dev_right, 'dev_total':dev_total, 'data':(instances,outputs)}
+        entities += entity_states.flatten().tolist()
+
+    return {'dev_loss':dev_loss, 
+            'dev_accu':1.0*dev_right/dev_total, 
+            'dev_right':dev_right, 
+            'dev_total':dev_total, 
+            'data':(instances,outputs),
+
+            'dev_outputs': outputs,
+            'dev_answers': answers,
+
+            'dev_entities': entities,
+            }
 
 
 def main(_):
@@ -214,7 +230,7 @@ def main(_):
         for step in xrange(max_steps):
             
             cur_batch = trainDataStream.nextBatch()
-            _, loss_value, _ = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
+            _, loss_value, _, truth_value, pred_value, entity_states = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
             total_loss += loss_value
 
             if step % 100==0:
@@ -240,18 +256,39 @@ def main(_):
                 dev_accu = res_dict['dev_accu']
                 dev_right = int(res_dict['dev_right'])
                 dev_total = int(res_dict['dev_total'])
+
+                dev_answer = res_dict['dev_answers']
+                dev_output = res_dict['dev_outputs']
+
+                dev_entities = res_dict['dev_entities']
+
                 print('Dev loss = %.4f' % dev_loss)
                 log_file.write('Dev loss = %.4f\n' % dev_loss)
                 print('Dev accu = %.4f %d/%d' % (dev_accu, dev_right, dev_total))
                 log_file.write('Dev accu = %.4f %d/%d\n' % (dev_accu, dev_right, dev_total))
                 log_file.flush()
+
+                # update the model
                 if best_accu < dev_accu:
                     print('Saving weights, ACCU {} (prev_best) < {} (cur)'.format(best_accu, dev_accu))
                     saver.save(sess, best_path)
                     best_accu = dev_accu
                     FLAGS.best_accu = dev_accu
                     namespace_utils.save_namespace(FLAGS, path_prefix + ".config.json")
+
                     json.dump(res_dict['data'], open(FLAGS.output_path,'w'))
+
+                    # also, write ground truth, predicted outcome, and entity states respectively
+                    # first, for the train set
+                    json.dump(truth_value, open(FLAGS.train_answer_path, 'w'))
+                    json.dump(pred_value, open(FLAGS.train_output_path, 'w'))
+                    json.dump(entity_states, open(FLAGS.train_entity_path, 'w'))
+
+                    # next, for the validation set
+                    json.dump(dev_answer, open(FLAGS.validate_answer_path, 'w'))
+                    json.dump(dev_output, open(FLAGS.validate_output_path, 'w'))
+                    json.dump(dev_entities, open(FLAGS.validate_entity_path, 'w'))
+
                 duration = time.time() - start_time
                 print('Duration %.3f sec' % (duration))
                 sys.stdout.flush()
