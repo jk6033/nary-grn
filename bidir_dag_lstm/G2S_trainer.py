@@ -77,7 +77,7 @@ def evaluate(sess, valid_graph, devDataStream, devDataStreamRev, options=None, s
         
         accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(
             sess, cur_batch, cur_batch_rev, options, is_train=False)
-        instances += cur_bath.instances
+        # instances += cur_bath.instances
         
         answers += truth_value.flatten().tolist()
         outputs += output_value.flatten().tolist()
@@ -92,8 +92,7 @@ def evaluate(sess, valid_graph, devDataStream, devDataStreamRev, options=None, s
             'dev_accu': 1.0*dev_right/dev_total, 
             'dev_right':dev_right, 
             'dev_total':dev_total, 
-            'data':(instances,outputs),
-
+            
             'dev_outputs': outputs,
             'dev_answers': answers,
 
@@ -333,7 +332,7 @@ def main(_):
                     FLAGS.best_accu = dev_accu
                     namespace_utils.save_namespace(FLAGS, path_prefix + ".config.json")
 
-                    json.dump(res_dict['data'], open(FLAGS.output_path,'w'))
+                    # json.dump(res_dict['data'], open(FLAGS.output_path,'w'))
 
                     # also, write ground truth, predicted outcome, and entity states respectively
                     # first, for the train set
