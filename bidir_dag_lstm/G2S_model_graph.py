@@ -210,7 +210,7 @@ class ModelGraph(object):
                         self.accu, 
                         self.loss, 
                         self.train_op, 
-                        self.answer,
+                        self.answers,
                         self.output,
                         self.entity_states, 
                         self.entity.entity_states, 
@@ -219,7 +219,7 @@ class ModelGraph(object):
             return sess.run([
                         self.accu, 
                         self.loss, 
-                        self.answer,
+                        self.answers,
                         self.output,
                         self.entity_states], feed_dict)
 
