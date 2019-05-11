@@ -206,10 +206,22 @@ class ModelGraph(object):
         feed_dict[self.answers] = batch.y
 
         if is_train:
-            return sess.run(
-                [self.accu, self.loss, self.train_op, self.entity_states, self.entity.entity_states, self.entity_rev.entity_states], feed_dict)
+            return sess.run([
+                        self.accu, 
+                        self.loss, 
+                        self.train_op, 
+                        self.answer,
+                        self.output,
+                        self.entity_states, 
+                        self.entity.entity_states, 
+                        self.entity_rev.entity_states], feed_dict)
         else:
-            return sess.run([self.accu, self.loss, self.output], feed_dict)
+            return sess.run([
+                        self.accu, 
+                        self.loss, 
+                        self.answer,
+                        self.output,
+                        self.entity_states], feed_dict)
 
 
 if __name__ == '__main__':

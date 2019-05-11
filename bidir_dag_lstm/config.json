@@ -39,4 +39,9 @@
     "generate_config": false
 
     , "dag_hidden_dim": 150
+
+    ,"output_path": "logs/result_c_m_0.json"
+    , "train_result_path": "logs/train/result.json"
+    , "validate_result_path": "logs/validate/result.json"
+    , "test_result_path": "logs/test/result.json"
 }

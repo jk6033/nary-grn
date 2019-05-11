@@ -107,27 +107,30 @@ if __name__ == '__main__':
             assert cur_batch.batch_size == cur_batch_rev.batch_size
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
-            accu_value, loss_value, output_value = valid_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=False)
+            accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(
+                    sess, cur_batch, cur_batch_rev, FLAGS, is_train=False)
             
             instances += cur_batch.instances
             instances_rev += cur_batch_rev.instances
 
+            answers += truth_value.flatten().tolist()
             outputs += output_value.flatten().tolist()
-            # answers += answer_value.flatten().tolist()
 
             test_loss += loss_value
             test_right += accu_value
             test_total += cur_batch.batch_size
+
+            entities += entity_states.tolist()
+
         duration = time.time() - start_time
         print('Decoding time %.3f sec' % (duration))
 
         assert len(instances) == len(instances_rev) and len(instances) == len(outputs)
         json.dump((instances,instances_rev,outputs,testset,testset_rev), open(out_path,'w'))
 
-
-        # newly added
-        # json.dump((outputs), open(out_path,'w'))
-        # json.dump((answers), open(out_path,'w'))
+        test_jsonify = {
+            "answer": answers, "output": outputs, "entity": entities}
+        json.dump(test_jsonify, open(FLAGS.test_result_path, 'w'))
 
         print('Test accu {}, right {}, total {}'.format(1.0*test_right/test_total, test_right, test_total))
 

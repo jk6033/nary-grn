@@ -71,7 +71,8 @@ def evaluate(sess, valid_graph, devDataStream, options=None, suffix=''):
     
     for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
         cur_batch = devDataStream.get_batch(batch_index)
-        accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(sess, cur_batch, options, is_train=False)
+        accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(
+            sess, cur_batch, options, is_train=False)
         instances += cur_batch.instances
         
         answers += truth_value.flatten().tolist()
@@ -239,6 +240,7 @@ def main(_):
             
             cur_batch = trainDataStream.nextBatch()
             _, loss_value, _, answer_temp, pred_temp, entity_temp = train_graph.execute(sess, cur_batch, FLAGS, is_train=True)
+            
             total_loss += loss_value
             answer += answer_temp.flatten().tolist()
             prediction += pred_temp.flatten().tolist()
@@ -263,8 +265,10 @@ def main(_):
                 start_time = time.time()
                 print('Validation Data Eval:')
                 res_dict = evaluate(sess, valid_graph, devDataStream, options=FLAGS, suffix=str(step))
+                
                 dev_loss = res_dict['dev_loss']
                 dev_accu = res_dict['dev_accu']
+                
                 dev_right = int(res_dict['dev_right'])
                 dev_total = int(res_dict['dev_total'])
 

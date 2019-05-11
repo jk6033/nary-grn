@@ -6,6 +6,9 @@ import sys
 import time
 import numpy as np
 import codecs
+import json
+import random
+import math
 
 from vocab_utils import Vocab
 import namespace_utils
@@ -23,12 +26,6 @@ cc = SmoothingFunction()
 import metric_utils
 
 import platform
-
-import random 
-
-#-----------------------------------#
-import math
-#-----------------------------------#
 
 def get_machine_name():
     return platform.node()
@@ -74,12 +71,28 @@ def evaluate(sess, valid_graph, devDataStream, devDataStreamRev, options=None, s
         cur_batch = devDataStream.get_batch(batch_index)
         cur_batch_rev = devDataStreamRev.get_batch(batch_index)
         
-        accu_value, loss_value, _ = valid_graph.execute(sess, cur_batch, cur_batch_rev, options, is_train=False)
+        accu_value, loss_value, truth_value, output_value, entity_states = valid_graph.execute(
+            sess, cur_batch, cur_batch_rev, options, is_train=False)
+        
+        answers += truth_value.flatten().tolist()
+        outputs += output_value.flatten().tolist()
+        
         dev_loss += loss_value
         dev_right += accu_value
         dev_total += cur_batch.batch_size
 
-    return {'dev_loss':dev_loss, 'dev_accu':1.0*dev_right/dev_total, 'dev_right':dev_right, 'dev_total':dev_total, }
+        entities += entity_states.tolist()
+
+    return {'dev_loss': dev_loss, 
+            'dev_accu': 1.0*dev_right/dev_total, 
+            'dev_right':dev_right, 
+            'dev_total':dev_total, 
+
+            'dev_outputs': outputs,
+            'dev_answers': answers,
+
+            'dev_entities': entities,
+            }
 
 
 def shuffle_both(data, dataRev):
@@ -231,6 +244,11 @@ def main(_):
         total_loss = 0.0
         start_time = time.time()
 
+        # accumulate train data
+        answer = []
+        prediction = []
+        entity = []
+
         for step in xrange(max_steps):
             cur_batch = trainDataStream.nextBatch()
             cur_batch_rev = trainDataStreamRev.nextBatch()
@@ -239,15 +257,15 @@ def main(_):
             assert np.array_equal(cur_batch.node_num, cur_batch_rev.node_num)
             assert np.array_equal(cur_batch.y, cur_batch_rev.y)
             
-            _, loss_value, _, entity_states, entity_states_for, entity_states_rev = train_graph.execute(sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
+            _, loss_value, _, answer_temp, pred_temp, entity_temp, entity_states_for, entity_states_rev = train_graph.execute(
+                sess, cur_batch, cur_batch_rev, FLAGS, is_train=True)
             
-        #-----------------------------------#
+            total_loss += loss_value
+            answer += answer_temp.flatten().tolist()
+            prediction += pred_temp.flatten().tolist()
+            entity += entity_temp.tolist()
             
-            ####
-            # for e in entity_states.flatten():
-            #     if math.isnan(e): 
-            #         print("NaN detected in entity_states")
-            #         continue
+            # check for lstm NaN output in entity states
             for w in entity_states_for.flatten():
                 if math.isnan(w): 
                     print("NaN detected in entity_states_for")
@@ -256,10 +274,11 @@ def main(_):
                 if math.isnan(b): 
                     print("NaN detected in entity_states_rev")
                     break
-            ####
-
-        #-----------------------------------#
+            
             total_loss += loss_value
+            answer += answer_temp.flatten().tolist()
+            prediction += pred_temp.flatten().tolist()
+            entity += entity_temp.tolist()
             
             if trainDataStream.cur_pointer >= trainDataStream.num_batch:
                 assert trainDataStreamRev.cur_pointer >= trainDataStreamRev.num_batch
@@ -284,10 +303,18 @@ def main(_):
                 start_time = time.time()
                 print('Validation Data Eval:')
                 res_dict = evaluate(sess, valid_graph, devDataStream, devDataStreamRev, options=FLAGS, suffix=str(step))
+                
                 dev_loss = res_dict['dev_loss']
                 dev_accu = res_dict['dev_accu']
+                
                 dev_right = int(res_dict['dev_right'])
                 dev_total = int(res_dict['dev_total'])
+
+                dev_answer = res_dict['dev_answers']
+                dev_output = res_dict['dev_outputs']
+                
+                dev_entities = res_dict['dev_entities']
+
                 print('Dev loss = %.4f' % dev_loss)
                 log_file.write('Dev loss = %.4f\n' % dev_loss)
                 print('Dev accu = %.4f %d/%d' % (dev_accu, dev_right, dev_total))
@@ -299,6 +326,20 @@ def main(_):
                     best_accu = dev_accu
                     FLAGS.best_accu = dev_accu
                     namespace_utils.save_namespace(FLAGS, path_prefix + ".config.json")
+
+                    json.dump(res_dict['data'], open(FLAGS.output_path,'w'))
+
+                    # also, write ground truth, predicted outcome, and entity states respectively
+                    # first, for the train set
+                    train_jsonify = {
+                        "answer": answer, "output": prediction, "entity": entity}
+                    json.dump(train_jsonify, open(FLAGS.train_result_path, 'w'))
+                    # next, for the validation set
+                    validation_jsonify = {
+                        "answer": dev_answer, "output": dev_output, "entity": dev_entities}
+                    json.dump(validation_jsonify, open(FLAGS.validate_result_path, 'w'))
+
+
                 duration = time.time() - start_time
                 print('Duration %.3f sec' % (duration))
                 sys.stdout.flush()
