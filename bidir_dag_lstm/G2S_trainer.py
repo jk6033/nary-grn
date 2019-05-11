@@ -67,6 +67,10 @@ def evaluate(sess, valid_graph, devDataStream, devDataStreamRev, options=None, s
     dev_loss = 0.0
     dev_right = 0.0
     dev_total = 0.0
+
+    answers = []
+    outputs = []
+    entities = []
     for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
         cur_batch = devDataStream.get_batch(batch_index)
         cur_batch_rev = devDataStreamRev.get_batch(batch_index)
