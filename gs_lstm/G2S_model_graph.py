@@ -143,7 +143,7 @@ class ModelGraph(object):
             return
 
         if options.optimize_type == 'adadelta':
-            clipper = 5.0
+            clipper = 50.0 # used to be 50
             optimizer = tf.train.AdadeltaOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
@@ -152,7 +152,7 @@ class ModelGraph(object):
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'adam':
-            clipper = 5.0
+            clipper = 50.0 # used to be 50
             optimizer = tf.train.AdamOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
