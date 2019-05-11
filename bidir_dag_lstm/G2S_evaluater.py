@@ -96,10 +96,16 @@ if __name__ == '__main__':
         devDataStream.reset()
         instances = []
         instances_rev = []
+
+        answers = []
         outputs = []
+        
         test_loss = 0.0
         test_right = 0.0
         test_total = 0.0
+
+        entities = []
+        
         start_time = time.time()
         for batch_index in xrange(devDataStream.get_num_batch()): # for each batch
             cur_batch = devDataStream.get_batch(batch_index)
