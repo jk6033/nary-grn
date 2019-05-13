@@ -116,19 +116,19 @@ class ModelGraph(object):
                 "b_linear", [options.class_num], dtype=tf.float32)
 
         # [batch, class_num]
-        logits = tf.matmul(entity_states, w_linear) + b_linear
+        logits = tf.nn.softmax(tf.matmul(hidden_out1, w2) + b2)
+        logits = _clip_and_normalize(prediction, 1.0e-6)
 
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
- 
+        
         ## calculating accuracy
         self.answers = tf.placeholder(tf.int32, [None,])
-        self.accu = tf.reduce_sum( tf.cast(
-                tf.equal(tf.argmax(logits,axis=-1,output_type=tf.int32),self.answers),
-                dtype=tf.float32))
+        self.accu = tf.reduce_sum(tf.cast(tf.equal(self.output,self.answers),dtype=tf.float32))
 
         ## calculating loss
-        self.loss = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits( 
-                logits=logits, labels=tf.one_hot(self.answers, options.class_num)))
+        xent = -tf.reduce_sum(
+                tf.one_hot(self.answers, options.class_num)*tf.log(output), axis=-1)
+        self.loss = tf.reduce_mean(xent)
 
         if mode != 'train':
             print('Return from here, just evaluate')
@@ -154,7 +154,7 @@ class ModelGraph(object):
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'sgd':
-            clipper = 1.0 # used to be 50
+            clipper = 5.0 # used to be 50
             optimizer = tf.train.GradientDescentOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
