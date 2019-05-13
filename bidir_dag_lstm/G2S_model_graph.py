@@ -111,7 +111,7 @@ class ModelGraph(object):
 
         w_linear = tf.get_variable(
                 "w_linear", [options.entity_num*self.encoder_dim, options.class_num], 
-                dtype=tf.float32) # , constraint=lambda t: tf.clip_by_norm(t, 1))
+                dtype=tf.float32)
         b_linear = tf.get_variable(
                 "b_linear", [options.class_num], dtype=tf.float32)
 
@@ -154,7 +154,7 @@ class ModelGraph(object):
             grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars), clipper)
             self.train_op = optimizer.apply_gradients(zip(grads, tvars))
         elif options.optimize_type == 'sgd':
-            clipper = 6.0 # used to be 50
+            clipper = 50.0 # used to be 50
             optimizer = tf.train.GradientDescentOptimizer(learning_rate=options.learning_rate)
             tvars = tf.trainable_variables()
             if options.lambda_l2>0.0:
