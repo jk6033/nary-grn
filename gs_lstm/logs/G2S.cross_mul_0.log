@@ -1,9 +1,201 @@
-<namespace_utils.Bunch object at 0x7fe68a07a0d0>
-Step 664: loss = 1.31 (58.132 sec)
-Dev loss = 30.9770
+<namespace_utils.Bunch object at 0x7f602e172610>
+Step 664: loss = 1.31 (30.681 sec)
+Dev loss = 30.4744
 Dev accu = 0.5550 111/200
-Duration 10.614 sec
-Step 1329: loss = 1.22 (68.250 sec)
-Dev loss = 29.5678
-Dev accu = 0.5700 114/200
-Duration 19.158 sec
+Duration 9.039 sec
+Step 1329: loss = 1.22 (38.999 sec)
+Dev loss = 29.0955
+Dev accu = 0.5350 107/200
+Duration 0.319 sec
+Step 1994: loss = 1.18 (29.932 sec)
+Dev loss = 28.4720
+Dev accu = 0.5300 106/200
+Duration 0.307 sec
+Step 2659: loss = 1.15 (31.051 sec)
+Dev loss = 27.2459
+Dev accu = 0.5400 108/200
+Duration 0.336 sec
+Step 3324: loss = 1.12 (29.766 sec)
+Dev loss = 26.0880
+Dev accu = 0.5800 116/200
+Duration 38.862 sec
+Step 3989: loss = 1.09 (68.881 sec)
+Dev loss = 24.8353
+Dev accu = 0.5850 117/200
+Duration 43.412 sec
+Step 4654: loss = 1.04 (73.341 sec)
+Dev loss = 23.5754
+Dev accu = 0.6650 133/200
+Duration 50.380 sec
+Step 5319: loss = 1.00 (80.064 sec)
+Dev loss = 22.9073
+Dev accu = 0.6500 130/200
+Duration 0.310 sec
+Step 5984: loss = 0.98 (29.442 sec)
+Dev loss = 22.2218
+Dev accu = 0.6700 134/200
+Duration 67.428 sec
+Step 6649: loss = 0.95 (96.879 sec)
+Dev loss = 21.3515
+Dev accu = 0.6750 135/200
+Duration 73.152 sec
+Step 7314: loss = 0.92 (102.791 sec)
+Dev loss = 21.5886
+Dev accu = 0.6850 137/200
+Duration 78.031 sec
+Step 7979: loss = 0.90 (107.620 sec)
+Dev loss = 21.4013
+Dev accu = 0.6900 138/200
+Duration 88.122 sec
+Step 8644: loss = 0.88 (117.621 sec)
+Dev loss = 20.5553
+Dev accu = 0.6650 133/200
+Duration 0.313 sec
+Step 9309: loss = 0.87 (29.948 sec)
+Dev loss = 19.6902
+Dev accu = 0.6950 139/200
+Duration 101.802 sec
+Step 9974: loss = 0.86 (131.298 sec)
+Dev loss = 19.5070
+Dev accu = 0.6950 139/200
+Duration 0.316 sec
+Step 10639: loss = 0.85 (29.964 sec)
+Dev loss = 20.3843
+Dev accu = 0.7050 141/200
+Duration 115.754 sec
+Step 11304: loss = 0.83 (145.414 sec)
+Dev loss = 19.0699
+Dev accu = 0.7050 141/200
+Duration 0.338 sec
+Step 11969: loss = 0.83 (29.995 sec)
+Dev loss = 19.3263
+Dev accu = 0.7000 140/200
+Duration 0.314 sec
+Step 12634: loss = 0.82 (29.461 sec)
+Dev loss = 19.7161
+Dev accu = 0.6900 138/200
+Duration 0.312 sec
+Step 13299: loss = 0.81 (29.872 sec)
+Dev loss = 19.4940
+Dev accu = 0.7300 146/200
+Duration 142.912 sec
+Step 13964: loss = 0.80 (172.883 sec)
+Dev loss = 18.4377
+Dev accu = 0.7350 147/200
+Duration 150.152 sec
+Step 14629: loss = 0.79 (179.422 sec)
+Dev loss = 19.4029
+Dev accu = 0.7000 140/200
+Duration 0.312 sec
+Step 15294: loss = 0.78 (29.179 sec)
+Dev loss = 19.1558
+Dev accu = 0.7000 140/200
+Duration 0.383 sec
+Step 15959: loss = 0.77 (30.983 sec)
+Dev loss = 18.3671
+Dev accu = 0.7150 143/200
+Duration 0.310 sec
+Step 16624: loss = 0.76 (29.315 sec)
+Dev loss = 18.3542
+Dev accu = 0.6900 138/200
+Duration 0.312 sec
+Step 17289: loss = 0.75 (29.180 sec)
+Dev loss = 18.2696
+Dev accu = 0.7300 146/200
+Duration 0.381 sec
+Step 17954: loss = 0.75 (29.679 sec)
+Dev loss = 18.3651
+Dev accu = 0.7100 142/200
+Duration 0.316 sec
+Step 18619: loss = 0.74 (29.579 sec)
+Dev loss = 18.4260
+Dev accu = 0.7200 144/200
+Duration 0.351 sec
+Step 19284: loss = 0.74 (29.671 sec)
+Dev loss = 18.5997
+Dev accu = 0.7200 144/200
+Duration 0.412 sec
+Step 19949: loss = 0.73 (29.358 sec)
+Dev loss = 18.2016
+Dev accu = 0.7250 145/200
+Duration 0.310 sec
+Step 20614: loss = 0.72 (29.238 sec)
+Dev loss = 17.5431
+Dev accu = 0.7300 146/200
+Duration 0.311 sec
+Step 21279: loss = 0.71 (29.616 sec)
+Dev loss = 17.2363
+Dev accu = 0.7250 145/200
+Duration 0.400 sec
+Step 21944: loss = 0.71 (29.136 sec)
+Dev loss = 17.2188
+Dev accu = 0.7150 143/200
+Duration 0.308 sec
+Step 22609: loss = 0.69 (29.075 sec)
+Dev loss = 17.2826
+Dev accu = 0.7300 146/200
+Duration 0.312 sec
+Step 23274: loss = 0.68 (30.575 sec)
+Dev loss = 17.4780
+Dev accu = 0.7400 148/200
+Duration 245.413 sec
+Step 23939: loss = 0.68 (274.392 sec)
+Dev loss = 17.4358
+Dev accu = 0.7400 148/200
+Duration 0.309 sec
+Step 24604: loss = 0.67 (30.864 sec)
+Dev loss = 17.8657
+Dev accu = 0.7150 143/200
+Duration 0.340 sec
+Step 25269: loss = 0.67 (29.415 sec)
+Dev loss = 16.9377
+Dev accu = 0.7400 148/200
+Duration 0.309 sec
+Step 25934: loss = 0.66 (29.249 sec)
+Dev loss = 17.1081
+Dev accu = 0.7350 147/200
+Duration 0.308 sec
+Step 26599: loss = 0.65 (29.695 sec)
+Dev loss = 16.9320
+Dev accu = 0.7500 150/200
+Duration 279.256 sec
+Step 27264: loss = 0.64 (308.538 sec)
+Dev loss = 17.0006
+Dev accu = 0.7400 148/200
+Duration 0.336 sec
+Step 27929: loss = 0.64 (29.876 sec)
+Dev loss = 15.9761
+Dev accu = 0.7550 151/200
+Duration 295.981 sec
+Step 28594: loss = 0.63 (325.256 sec)
+Dev loss = 16.8393
+Dev accu = 0.7250 145/200
+Duration 0.306 sec
+Step 29259: loss = 0.63 (29.118 sec)
+Dev loss = 17.1300
+Dev accu = 0.7350 147/200
+Duration 0.312 sec
+Step 29924: loss = 0.62 (29.753 sec)
+Dev loss = 16.4924
+Dev accu = 0.7350 147/200
+Duration 0.306 sec
+Step 30589: loss = 0.62 (29.076 sec)
+Dev loss = 16.5367
+Dev accu = 0.7500 150/200
+Duration 0.315 sec
+Step 31254: loss = 0.60 (29.108 sec)
+Dev loss = 17.0752
+Dev accu = 0.7500 150/200
+Duration 0.307 sec
+Step 31919: loss = 0.60 (29.644 sec)
+Dev loss = 16.8744
+Dev accu = 0.7350 147/200
+Duration 0.307 sec
+Step 32584: loss = 0.60 (30.365 sec)
+Dev loss = 17.0519
+Dev accu = 0.7300 146/200
+Duration 0.308 sec
+Step 33249: loss = 0.58 (29.185 sec)
+Dev loss = 15.2836
+Dev accu = 0.7800 156/200
+Duration 353.061 sec
