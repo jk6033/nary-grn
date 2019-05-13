@@ -225,9 +225,7 @@ def main(_):
             vars_[var.name.split(":")[0]] = var
         saver = tf.train.Saver(vars_)
         
-        config = tf.ConfigProto() 
-        config.gpu_options.allow_growth = True 
-        sess = tf.Session(config=config)
+        sess = tf.Session()
         #sess = tf_debug.LocalCLIDebugWrapperSession(sess)
         #sess.add_tensor_filter("has_inf_or_nan", tf_debug.has_inf_or_nan)
         sess.run(initializer)
