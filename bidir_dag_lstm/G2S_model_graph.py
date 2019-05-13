@@ -117,7 +117,7 @@ class ModelGraph(object):
 
         # [batch, class_num]
         logits = tf.nn.softmax(tf.matmul(entity_states, w_linear) + b_linear)
-        logits = _clip_and_normalize(prediction, 1.0e-6)
+        logits = _clip_and_normalize(logits, 1.0e-6)
 
         self.output = tf.argmax(logits, axis=-1, output_type=tf.int32)
         
