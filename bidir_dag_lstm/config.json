@@ -19,7 +19,7 @@
     "lambda_l2": 0.001,
     "dropout_rate": 0.1,
     "max_epochs": 50,
-    "optimize_type": "adadelta",
+    "optimize_type": "sgd",
 
     "with_highway": true,
     "highway_layer_num": 1,
