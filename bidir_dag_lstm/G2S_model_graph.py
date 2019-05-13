@@ -127,7 +127,7 @@ class ModelGraph(object):
 
         ## calculating loss
         xent = -tf.reduce_sum(
-                tf.one_hot(self.answers, options.class_num)*tf.log(output), axis=-1)
+                tf.one_hot(self.answers, options.class_num)*tf.log(logits), axis=-1)
         self.loss = tf.reduce_mean(xent)
 
         if mode != 'train':
