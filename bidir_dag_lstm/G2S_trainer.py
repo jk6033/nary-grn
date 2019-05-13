@@ -227,7 +227,7 @@ def main(_):
         
         config = tf.ConfigProto() 
         config.gpu_options.allow_growth = True 
-        session = tf.Session(config=config)
+        sess = tf.Session(config=config)
         #sess = tf_debug.LocalCLIDebugWrapperSession(sess)
         #sess.add_tensor_filter("has_inf_or_nan", tf_debug.has_inf_or_nan)
         sess.run(initializer)
